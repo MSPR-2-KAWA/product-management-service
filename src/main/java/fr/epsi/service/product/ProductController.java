@@ -1,11 +1,9 @@
 package fr.epsi.service.product;
 
+import fr.epsi.service.product.dto.UpdateProductDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -20,6 +18,10 @@ public class ProductController {
     @GetMapping("/api/products/{id}")
     public Product getProductsById(@PathVariable Integer id) {
         return productService.getById(id);
+    }
+    @PutMapping("/api/products/{id}")
+    public Product updateProduct(@PathVariable Integer id, @RequestBody UpdateProductDTO dto) {
+        return productService.updateProduct(id, dto);
     }
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<String> handleResponseStatusException(ResponseStatusException ex) {

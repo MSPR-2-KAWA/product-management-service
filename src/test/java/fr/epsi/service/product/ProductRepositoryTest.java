@@ -40,4 +40,29 @@ class ProductRepositoryTest {
         assertTrue(found.isPresent());
         assertEquals("H2 Product", found.get().getName());
     }
+
+    @Test
+    void updateProduct_shouldPersistChanges() {
+        // Création et sauvegarde
+        Product product = new Product();
+        product.setName("Initial Name");
+        product.setPrice(10.0f);
+        product.setDescription("Initial desc");
+        product.setColor("White");
+        product.setStock(10);
+
+        Product saved = productRepository.save(product);
+
+        // Mise à jour des champs
+        saved.setName("Updated Name");
+        saved.setPrice(15.5f);
+        saved.setStock(20);
+        productRepository.save(saved);
+
+        Optional<Product> updated = productRepository.findById(saved.getId());
+        assertTrue(updated.isPresent());
+        assertEquals("Updated Name", updated.get().getName());
+        assertEquals(15.5f, updated.get().getPrice());
+        assertEquals(20, updated.get().getStock());
+    }
 }

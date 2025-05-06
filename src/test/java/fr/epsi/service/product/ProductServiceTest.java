@@ -1,5 +1,6 @@
 package fr.epsi.service.product;
 
+import fr.epsi.service.product.dto.UpdateProductDTO;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -63,5 +64,32 @@ class ProductServiceTest {
 
         assertEquals(404, exception.getStatusCode().value());
         assertEquals("Product 99 not found", exception.getReason());
+    }
+
+    @Test
+    void updateProduct_shouldUpdateAndReturnProduct() {
+        // Produit existant
+        Product existingProduct = new Product();
+        existingProduct.setId(1);
+        existingProduct.setName("Old Name");
+
+        // DTO avec nouvelles valeurs
+        UpdateProductDTO dto = new UpdateProductDTO();
+        dto.setName("New Name");
+        dto.setPrice(99.99f);
+        dto.setDescription("Updated description");
+        dto.setColor("Black");
+        dto.setStock(30);
+
+        when(productRepository.findById(1)).thenReturn(Optional.of(existingProduct));
+        when(productRepository.save(any(Product.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Product result = productService.updateProduct(1, dto);
+
+        assertEquals("New Name", result.getName());
+        assertEquals(99.99f, result.getPrice());
+        assertEquals("Black", result.getColor());
+        verify(productRepository).findById(1);
+        verify(productRepository).save(existingProduct);
     }
 }
