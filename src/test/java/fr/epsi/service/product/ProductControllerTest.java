@@ -5,9 +5,11 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
 
@@ -46,6 +48,29 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$[1].name").value("Product Test 2"))
                 .andExpect(jsonPath("$[1].price").value(25.5))
                 .andExpect(jsonPath("$.length()").value(2));
+    }
+    @Test
+    void getProductById_shouldReturnSingleProduct() throws Exception {
+        Product product = new Product();
+        product.setId(1);
+        product.setName("Product Test");
+        product.setPrice(12.5f);
+
+        when(productService.getById(1)).thenReturn(product);
+
+        mockMvc.perform(get("/api/products/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Product Test"))
+                .andExpect(jsonPath("$.price").value(12.5));
+    }
+
+    @Test
+    void getProductById_shouldReturn404IfNotFound() throws Exception {
+        when(productService.getById(999)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Product 999 not found"));
+
+        mockMvc.perform(get("/api/products/999"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Product 999 not found"));
     }
 
     @Configuration
