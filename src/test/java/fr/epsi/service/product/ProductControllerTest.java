@@ -25,7 +25,7 @@ class ProductControllerTest {
     @Autowired
     private ProductService productService;
 
-    @Test
+    @Test                  //test get all endpoint
     void getAllProducts_shouldReturnJsonArray() throws Exception {
         Product product = new Product();
         product.setId(1);
