@@ -4,12 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class ProductController {
 
-    @GetMapping("/product")
-    public String helloWorld() {
-        return "Hello world";
-    }
+    private final ProductService productService;
+    @GetMapping("/api/products")
+    public List<Product> getAllProducts() { return productService.getAll(); }
 }
