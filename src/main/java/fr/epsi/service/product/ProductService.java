@@ -1,6 +1,6 @@
 package fr.epsi.service.product;
 
-import fr.epsi.service.product.dto.UpdateProductDTO;
+import fr.epsi.service.product.dto.ProductDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class ProductService {
         return productRepository.findById(id).orElseThrow(
                 ()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product " + id + " not found") );
     }
-    public Product updateProduct(Integer id, UpdateProductDTO dto) {
+    public Product updateProduct(Integer id, ProductDTO dto) {
         Product existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product " + id + " not found"));
 
@@ -30,8 +30,23 @@ public class ProductService {
 
         return productRepository.save(existingProduct);
     }
+    public Product createProduct(ProductDTO dto) {
+        Product product = new Product();
+        product.setName(dto.getName());
+        product.setPrice(dto.getPrice());
+        product.setDescription(dto.getDescription());
+        product.setColor(dto.getColor());
+        product.setStock(dto.getStock());
 
+        return productRepository.save(product);
+    }
 
+    public void deleteProduct(Integer id) {
+        if (!productRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product " + id + " not found");
+        }
+        productRepository.deleteById(id);
+    }
 }
 
 

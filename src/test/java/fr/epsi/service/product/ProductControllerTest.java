@@ -1,6 +1,6 @@
 package fr.epsi.service.product;
 
-import fr.epsi.service.product.dto.UpdateProductDTO;
+import fr.epsi.service.product.dto.ProductDTO;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -12,11 +12,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.server.ResponseStatusException;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+
 
 import java.util.Arrays;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -80,7 +80,7 @@ class ProductControllerTest {
     void updateProduct_shouldReturnUpdatedProduct() throws Exception {
         Product updatedProduct = getUpdatedProduct();
 
-        when(productService.updateProduct(eq(1), any(UpdateProductDTO.class))).thenReturn(updatedProduct);
+        when(productService.updateProduct(eq(1), any(ProductDTO.class))).thenReturn(updatedProduct);
 
         mockMvc.perform(put("/api/products/1")
                         .contentType("application/json")
@@ -101,7 +101,7 @@ class ProductControllerTest {
 
     @Test
     void updateProduct_shouldReturn404IfProductNotFound() throws Exception {
-        UpdateProductDTO dto = new UpdateProductDTO();
+        ProductDTO dto = new ProductDTO();
         dto.setName("New Name");
         dto.setPrice(99.99f);
         dto.setDescription("Desc");
@@ -109,7 +109,7 @@ class ProductControllerTest {
         dto.setStock(15);
 
         // Simule une exception comme dans le service
-        when(productService.updateProduct(eq(999), any(UpdateProductDTO.class)))
+        when(productService.updateProduct(eq(999), any(ProductDTO.class)))
                 .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Product 999 not found"));
 
         mockMvc.perform(put("/api/products/999")
@@ -129,7 +129,7 @@ class ProductControllerTest {
 
     @NotNull
     private static Product getUpdatedProduct() {
-        UpdateProductDTO updateDto = new UpdateProductDTO();
+        ProductDTO updateDto = new ProductDTO();
         updateDto.setName("Updated Product");
         updateDto.setPrice(99.99f);
         updateDto.setDescription("Updated description");
@@ -144,6 +144,61 @@ class ProductControllerTest {
         updatedProduct.setColor(updateDto.getColor());
         updatedProduct.setStock(updateDto.getStock());
         return updatedProduct;
+    }
+
+
+    @Test
+    void createProduct_shouldReturnCreatedProduct() throws Exception {
+        ProductDTO dto = new ProductDTO();
+        dto.setName("New Product");
+        dto.setPrice(49.99f);
+        dto.setDescription("Brand new");
+        dto.setColor("Red");
+        dto.setStock(10);
+
+        Product savedProduct = new Product();
+        savedProduct.setId(1);
+        savedProduct.setName(dto.getName());
+        savedProduct.setPrice(dto.getPrice());
+        savedProduct.setDescription(dto.getDescription());
+        savedProduct.setColor(dto.getColor());
+        savedProduct.setStock(dto.getStock());
+
+        when(productService.createProduct(any(ProductDTO.class))).thenReturn(savedProduct);
+
+        mockMvc.perform(post("/api/products")
+                        .contentType("application/json")
+                        .content("""
+                        {
+                            "name": "New Product",
+                            "price": 49.99,
+                            "description": "Brand new",
+                            "color": "Red",
+                            "stock": 10
+                        }
+                    """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("New Product"))
+                .andExpect(jsonPath("$.price").value(49.99))
+                .andExpect(jsonPath("$.stock").value(10));
+    }
+
+    @Test
+    void deleteProduct_shouldReturnNoContent() throws Exception {
+        doNothing().when(productService).deleteProduct(1);
+
+        mockMvc.perform(delete("/api/products/1"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteProduct_shouldReturn404IfProductNotFound() throws Exception {
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Product 99 not found"))
+                .when(productService).deleteProduct(99);
+
+        mockMvc.perform(delete("/api/products/99"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Product 99 not found"));
     }
 
     @Configuration
