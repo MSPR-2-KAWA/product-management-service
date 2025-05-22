@@ -3,7 +3,7 @@ package fr.epsi.service.product.dto;
 import lombok.Data;
 
 @Data
-public class ProductDTO {
+public class ProductDto {
     private String name;
     private Float price;
     private String description;

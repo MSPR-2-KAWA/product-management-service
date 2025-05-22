@@ -1,6 +1,6 @@
 package fr.epsi.service.product;
 
-import fr.epsi.service.product.dto.ProductDTO;
+import fr.epsi.service.product.dto.ProductDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +20,11 @@ public class ProductController {
         return productService.getById(id);
     }
     @PutMapping("/api/products/{id}")
-    public Product updateProduct(@PathVariable Integer id, @RequestBody ProductDTO dto) {
+    public Product updateProduct(@PathVariable Integer id, @RequestBody ProductDto dto) {
         return productService.updateProduct(id, dto);
     }
     @PostMapping("/api/products")
-    public Product createProduct(@RequestBody ProductDTO dto) {
+    public Product createProduct(@RequestBody ProductDto dto) {
         return productService.createProduct(dto);
     }
     @DeleteMapping("/api/products/{id}")
