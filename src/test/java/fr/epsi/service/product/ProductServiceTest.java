@@ -1,6 +1,6 @@
 package fr.epsi.service.product;
 
-import fr.epsi.service.product.dto.ProductDTO;
+import fr.epsi.service.product.dto.ProductDto;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -74,7 +74,7 @@ class ProductServiceTest {
         existingProduct.setName("Old Name");
 
         // DTO avec nouvelles valeurs
-        ProductDTO dto = new ProductDTO();
+        ProductDto dto = new ProductDto();
         dto.setName("New Name");
         dto.setPrice(99.99f);
         dto.setDescription("Updated description");
@@ -95,7 +95,7 @@ class ProductServiceTest {
 
     @Test
     void createProduct_shouldSaveAndReturnProduct() {
-        ProductDTO dto = new ProductDTO();
+        ProductDto dto = new ProductDto();
         dto.setName("New Product");
         dto.setPrice(49.99f);
         dto.setDescription("Brand new");
