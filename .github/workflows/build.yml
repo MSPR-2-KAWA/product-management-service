@@ -45,3 +45,11 @@ jobs:
         if: github.event_name == 'pull_request'
         run: mvn sonar:sonar -Dsonar.projectKey=MSPR-2-KAWA_product-management-service -Dsonar.organization=mspr-2-kawa -Dsonar.token=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=https://sonarcloud.io -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} -Dsonar.pullrequest.branch=${{ github.head_ref }} -Dsonar.pullrequest.base=${{ github.base_ref }}
 
+      - name: Analyse SonarCloud (Push)
+        if: github.event_name == 'push'
+        run: mvn sonar:sonar \
+          -Dsonar.projectKey=MSPR-2-KAWA_product-management-service \
+          -Dsonar.organization=mspr-2-kawa \
+          -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml

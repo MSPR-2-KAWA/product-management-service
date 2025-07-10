@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-
+//product object
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
