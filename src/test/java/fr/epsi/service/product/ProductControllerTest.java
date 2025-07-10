@@ -1,6 +1,6 @@
 package fr.epsi.service.product;
 
-import fr.epsi.service.product.dto.ProductDTO;
+import fr.epsi.service.product.dto.ProductDto;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -80,7 +80,7 @@ class ProductControllerTest {
     void updateProduct_shouldReturnUpdatedProduct() throws Exception {
         Product updatedProduct = getUpdatedProduct();
 
-        when(productService.updateProduct(eq(1), any(ProductDTO.class))).thenReturn(updatedProduct);
+        when(productService.updateProduct(eq(1), any(ProductDto.class))).thenReturn(updatedProduct);
 
         mockMvc.perform(put("/api/products/1")
                         .contentType("application/json")
@@ -101,7 +101,7 @@ class ProductControllerTest {
 
     @Test
     void updateProduct_shouldReturn404IfProductNotFound() throws Exception {
-        ProductDTO dto = new ProductDTO();
+        ProductDto dto = new ProductDto();
         dto.setName("New Name");
         dto.setPrice(99.99f);
         dto.setDescription("Desc");
@@ -109,7 +109,7 @@ class ProductControllerTest {
         dto.setStock(15);
 
         // Simule une exception comme dans le service
-        when(productService.updateProduct(eq(999), any(ProductDTO.class)))
+        when(productService.updateProduct(eq(999), any(ProductDto.class)))
                 .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Product 999 not found"));
 
         mockMvc.perform(put("/api/products/999")
@@ -129,7 +129,7 @@ class ProductControllerTest {
 
     @NotNull
     private static Product getUpdatedProduct() {
-        ProductDTO updateDto = new ProductDTO();
+        ProductDto updateDto = new ProductDto();
         updateDto.setName("Updated Product");
         updateDto.setPrice(99.99f);
         updateDto.setDescription("Updated description");
@@ -149,7 +149,7 @@ class ProductControllerTest {
 
     @Test
     void createProduct_shouldReturnCreatedProduct() throws Exception {
-        ProductDTO dto = new ProductDTO();
+        ProductDto dto = new ProductDto();
         dto.setName("New Product");
         dto.setPrice(49.99f);
         dto.setDescription("Brand new");
@@ -164,7 +164,7 @@ class ProductControllerTest {
         savedProduct.setColor(dto.getColor());
         savedProduct.setStock(dto.getStock());
 
-        when(productService.createProduct(any(ProductDTO.class))).thenReturn(savedProduct);
+        when(productService.createProduct(any(ProductDto.class))).thenReturn(savedProduct);
 
         mockMvc.perform(post("/api/products")
                         .contentType("application/json")
