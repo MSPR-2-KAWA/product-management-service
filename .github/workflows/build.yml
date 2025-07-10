@@ -47,9 +47,4 @@ jobs:
 
       - name: Analyse SonarCloud (Push)
         if: github.event_name == 'push'
-        run: mvn sonar:sonar \
-          -Dsonar.projectKey=MSPR-2-KAWA_product-management-service \
-          -Dsonar.organization=mspr-2-kawa \
-          -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+        run: mvn sonar:sonar -Dsonar.projectKey=MSPR-2-KAWA_product-management-service -Dsonar.organization=mspr-2-kawa -Dsonar.token=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=https://sonarcloud.io -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
