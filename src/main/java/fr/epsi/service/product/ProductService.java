@@ -47,6 +47,14 @@ public class ProductService {
         }
         productRepository.deleteById(id);
     }
+
+    public Product reduceProductQuantity(Integer id, Integer quantity) {
+        Product product = getById(id);
+
+        product.setStock(product.getStock() - quantity);
+
+        return productRepository.save(product);
+    }
 }
 
 

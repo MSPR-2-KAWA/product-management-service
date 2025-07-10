@@ -8,6 +8,7 @@ import com.google.cloud.pubsub.v1.Subscriber;
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 import com.google.cloud.spring.pubsub.support.SubscriberFactory;
 import com.google.pubsub.v1.PubsubMessage;
+import fr.epsi.service.product.dto.ProductCommandDto;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,32 +18,28 @@ public class OrderCreatedSubscriber {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public OrderCreatedSubscriber(
-            SubscriberFactory subscriberFactory
-    ) {
+    public OrderCreatedSubscriber(SubscriberFactory subscriberFactory, ProductService productService) {
+
         Subscriber subscriber = subscriberFactory.createSubscriber(
                 "order-created-sub",
                 (PubsubMessage message, AckReplyConsumer consumer) -> {
                     String data = message.getData().toStringUtf8();
 
                     try {
-                        List<Integer> orderIds = objectMapper.readValue(data, new TypeReference<>() {});
-                        System.out.println("✅ Reçu : " + orderIds);
+                        List<ProductCommandDto> productList = objectMapper.readValue(
+                                data,
+                                new TypeReference<>() {}
+                        );
 
-                        for (Integer orderId : orderIds) {
-                            System.out.println("➡️ Traitement de la commande : " + orderId);
+                        for (ProductCommandDto cmd : productList) {
+                            productService.reduceProductQuantity(cmd.getIdProduit(), cmd.getQuantity());
                         }
-
                         consumer.ack();
-
                     } catch (Exception e) {
-                        System.err.println("❌ Erreur JSON : " + e.getMessage());
                         consumer.nack();
                     }
                 }
         );
-
         subscriber.startAsync().awaitRunning();
-        System.out.println("🔄 Abonné au topic Pub/Sub");
     }
 }
